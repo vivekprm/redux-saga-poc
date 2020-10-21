@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
+import { fetchImages } from "../../clients";
 import './styles.css';
 
 function ImageGrid(props) {
-    const [images, setImages] = useState([]);
-    useEffect(() => {
-        const key = process.env.REACT_APP_SPLASH_ACCESS_KEY
-        const baseUrl = process.env.REACT_APP_SPLASH_BASE_URL
-        fetch(`${baseUrl}/photos/?client_id=${key}&per_page=28`)
-            .then(res => res.json())
-            .then(images => setImages(images));
-    }, []);
+    const {images} = props;
     return (
         <div className="content">
             <section className="grid">
@@ -31,12 +25,17 @@ function ImageGrid(props) {
         </div>
     );
 };
-const mapStateToProps = ({isLoading, images, error}) => ({
-    isLoading,
-    images,
-    error
+const mapStateToProps = (state) => ({
+    isLoading: state.isLoading,
+    images: state.images,
+    error: state.error
 });
+const mapDispatchToProps = (dispatch) => {
+    return {
+        loadImages: fetchImages(dispatch)
+    }
+}
 export default connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(ImageGrid);
