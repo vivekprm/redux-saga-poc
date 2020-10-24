@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { loadImages } from "../../actions";
 import './styles.css';
+import Button from "../Button";
 
 function ImageGrid(props) {
-    const [images, setImages] = useState([]);
     useEffect(() => {
-        const KEY = `/photos?client_id=${process.env.REACT_APP_SPLASH_ACCESS_KEY}`;
-        fetch(`${process.env.REACT_APP_SPLASH_BASE_URL}${KEY}&per_page=3&page=1`)
-        .then(response => response.json())
-        .then(images => setImages(images));
+        props.loadImages();
     }, []);
-   
+    const { images, error, isLoading, loadImages } = props;
     return (
         <div className="content">
             <section className="grid">
@@ -28,8 +25,9 @@ function ImageGrid(props) {
                         />
                     </div>
                 ))}
-                <a onClick={props.loadImages}>Load Images</a>
             </section>
+            {error && <div className="error">{JSON.stringify(error)}</div>}
+            <Button onClick={() => !isLoading && loadImages()} loading={isLoading}>Load More</Button>
         </div>
     );
 };
