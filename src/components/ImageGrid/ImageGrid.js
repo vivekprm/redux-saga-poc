@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { fetchImages } from "../../clients";
+import { loadImages } from "../../actions";
 import './styles.css';
+import Button from "../Button";
 
 function ImageGrid(props) {
-    const {images} = props;
+    useEffect(() => {
+        props.loadImages();
+    }, []);
+    const { images, error, isLoading, loadImages } = props;
     return (
         <div className="content">
             <section className="grid">
@@ -22,6 +26,8 @@ function ImageGrid(props) {
                     </div>
                 ))}
             </section>
+            {error && <div className="error">{JSON.stringify(error)}</div>}
+            <Button onClick={() => !isLoading && loadImages()} loading={isLoading}>Load More</Button>
         </div>
     );
 };
@@ -30,11 +36,9 @@ const mapStateToProps = (state) => ({
     images: state.images,
     error: state.error
 });
-const mapDispatchToProps = (dispatch) => {
-    return {
-        loadImages: fetchImages(dispatch)
-    }
-}
+const mapDispatchToProps = (dispatch) => ({
+    loadImages: () => dispatch(loadImages())
+})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
