@@ -3,12 +3,13 @@ import { connect } from "react-redux";
 import { loadImages } from "../../actions";
 import './styles.css';
 import Button from "../Button";
+import Stats from "../Stats";
 
 function ImageGrid(props) {
     useEffect(() => {
         props.loadImages();
     }, []);
-    const { images, error, isLoading, loadImages } = props;
+    const { images, error, isLoading, loadImages, imageStats } = props;
     return (
         <div className="content">
             <section className="grid">
@@ -19,6 +20,7 @@ function ImageGrid(props) {
                             image.height / image.width,
                         )}`}
                     >
+                        <Stats stats={imageStats[image.id]} />
                         <img
                             src={image.urls.small}
                             alt={image.user.username}
@@ -34,6 +36,7 @@ function ImageGrid(props) {
 const mapStateToProps = (state) => ({
     isLoading: state.isLoading,
     images: state.images,
+    imageStats: state.imageStats,
     error: state.error
 });
 const mapDispatchToProps = (dispatch) => ({
